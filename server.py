@@ -9,19 +9,17 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
+import json
 from firebase_admin import credentials, firestore
 
 # Initialize Firebase
 from firebase_admin import credentials, firestore, initialize_app, get_app, App
 
 # Initialize Firebase safely (avoid re-initialization)
-try:
-    app_ = get_app()
-except ValueError:
-    creds_dict = json.loads(os.environ["SERVICE_ACCOUNT_KEY_JSON"])
-    cred = credentials.Certificate(creds_dict)
-    app_ = initialize_app(cred)
-
+    
+creds_dict = json.loads(os.environ["SERVICE_ACCOUNT_KEY_JSON"])
+cred = credentials.Certificate(creds_dict)
+app_ = initialize_app(cred)
 db = firestore.client(app_)
 
 
@@ -322,4 +320,5 @@ if __name__ == "__main__":
     # needed; here we disable reload to avoid watch-induced restart storms.
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run("server:app", host="0.0.0.0", port=port, reload=False)
+
 
