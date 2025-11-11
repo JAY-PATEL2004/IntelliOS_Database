@@ -18,7 +18,8 @@ from firebase_admin import credentials, firestore, initialize_app, get_app, App
 try:
     app_ = get_app()
 except ValueError:
-    cred = credentials.Certificate(os.environ["SERVICE_ACCOUNT_KEY_JSON"])
+    creds_dict = json.loads(os.environ["SERVICE_ACCOUNT_KEY_JSON"])
+    cred = credentials.Certificate(creds_dict)
     app_ = initialize_app(cred)
 
 db = firestore.client(app_)
@@ -321,3 +322,4 @@ if __name__ == "__main__":
     # needed; here we disable reload to avoid watch-induced restart storms.
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run("server:app", host="0.0.0.0", port=port, reload=False)
+
